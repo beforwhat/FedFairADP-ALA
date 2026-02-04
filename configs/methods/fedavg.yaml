@@ -1,0 +1,41 @@
+# FedAvg: Vanilla Federated Averaging (No DP, No Personalization, No Fairness)
+method_name: fedavg
+
+# ===== 全局训练参数（与统一配置完全一致）=====
+global_rounds: 200
+local_epochs: 5
+batch_size: 32
+learning_rate: 0.01
+optimizer:
+  name: SGD
+  momentum: 0.9
+  weight_decay: 1e-4
+lr_scheduler:
+  name: StepLR
+  step_size: 50
+  gamma: 0.9
+
+# ===== 差分隐私（DP）=====
+dp:
+  enabled: false          # 关键：无隐私保护
+
+# ===== 本地更新机制 =====
+ala:
+  enabled: false          # 普通 SGD 更新
+
+# ===== 伪标签 =====
+pseudo_labeling:
+  enabled: false          # 仅使用真实标签
+
+# ===== 客户端选择 =====
+fair_selection:
+  enabled: false          # 随机均匀选择客户端
+  client_fraction: 1.0    # 默认每轮选全部客户端（或按实验需求设为 0.1/0.5）
+
+# ===== 聚合方式 =====
+aggregation:
+  type: fedavg            # 简单参数平均
+
+# ===== Shapley 值 =====
+shapley:
+  enabled: false          # 不计算贡献度

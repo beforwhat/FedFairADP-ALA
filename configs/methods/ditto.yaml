@@ -1,0 +1,47 @@
+# Ditto: Personalized Federated Learning with Global Fairness Constraint
+method_name: ditto
+
+# ===== 全局训练参数（与统一配置一致）=====
+global_rounds: 200
+local_epochs: 5
+batch_size: 32
+learning_rate: 0.01
+optimizer:
+  name: SGD
+  momentum: 0.9
+  weight_decay: 1e-4
+lr_scheduler:
+  name: StepLR
+  step_size: 50
+  gamma: 0.9
+
+# ===== 差分隐私（DP）=====
+dp:
+  enabled: false          # 原版 Ditto 无 DP；若需加 DP，应另设变体
+
+# ===== 本地更新机制 =====
+ala:
+  enabled: false          # 使用 Ditto 原生双模型更新
+
+# Ditto-specific parameters
+ditto:
+  enabled: true
+  lambda: 0.5             # 正则系数 λ（原文 Table 2 推荐值 for CIFAR-10/EMNIST）
+  local_lr: 0.01          # 个性化模型本地学习率（通常 = 全局 lr）
+  local_epochs: 5         # 个性化模型本地训练轮次（与全局一致）
+
+# ===== 伪标签 =====
+pseudo_labeling:
+  enabled: false          # 原版无伪标签
+
+# ===== 客户端选择 =====
+fair_selection:
+  enabled: false          # 随机选择（公平性通过后处理实现）
+
+# ===== 聚合方式 =====
+aggregation:
+  type: fedavg            # 全局模型仍用 FedAvg 聚合
+
+# ===== Shapley 值 =====
+shapley:
+  enabled: false

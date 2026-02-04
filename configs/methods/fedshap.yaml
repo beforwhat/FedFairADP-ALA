@@ -1,0 +1,33 @@
+# FedSHAP: Shapley Value Based Weighted Aggregation
+method_name: fedshap
+
+# ===== 全局训练参数（与统一配置一致）=====
+global_rounds: 200
+local_epochs: 5
+batch_size: 32
+learning_rate: 0.01
+optimizer:
+  name: SGD
+  momentum: 0.9
+  weight_decay: 1e-4
+lr_scheduler:
+  name: StepLR
+  step_size: 50
+  gamma: 0.9
+
+# ===== 差分隐私（DP）=====
+dp:
+  enabled: false
+
+# ===== Shapley 聚合核心参数 =====
+shapley:
+  enabled: true
+  mc_samples: 100         # 蒙特卡洛采样组数 M（原文 Sec 4.2）
+  contribution_threshold: 0.01  # 忽略极低贡献客户端（加速）
+  aggregation: "weighted_by_shapley"  # 按 Shapley 值加权平均
+
+# ===== 其他模块 =====
+ala: {enabled: false}
+pseudo_labeling: {enabled: false}
+fair_selection: {enabled: false, client_fraction: 1.0}
+fedprox: {enabled: false}

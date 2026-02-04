@@ -1,0 +1,37 @@
+# EMNIST (ByClass) Dataset Configuration
+dataset_name: emnist
+task: image_classification
+variant: byclass                # Options: byclass, balanced, letters, etc.
+num_classes: 62                 # 0-9, A-Z, a-z
+input_shape: [1, 28, 28]        # Grayscale, 28x28
+
+# Data source
+data_root: "./data/raw"
+
+# Federated setup
+num_clients: 150
+train_ratio: 1.0                # EMNIST train/test already split
+
+# Non-IID configuration (as per your design)
+non_iid:
+  strategy: "natural_by_writer"           # Primary: each writer = one client
+  augment_with_dirichlet: true            # Secondary: add Dirichlet label skew
+  dirichlet_alpha: 0.1                    # Only applied if augment_with_dirichlet=True
+  min_samples_per_client: 300
+  max_samples_per_client: 5000            # Writers have varying sample counts
+  random_sample_sizes: false              # Natural distribution dominates
+
+# Preprocessing (Note: EMNIST images are rotated; need to fix orientation)
+transform:
+  common:
+    - Lambda: {func: "lambda x: x.rotate(90).transpose(Image.FLIP_LEFT_RIGHT)"}
+  train:
+    - ToTensor: {}
+    - Normalize: {mean: [0.175], std: [0.334]}   # EMNIST mean/std (grayscale)
+  test:
+    - ToTensor: {}
+    - Normalize: {mean: [0.175], std: [0.334]}
+
+# Reproducibility
+random_seed_for_split: 42
+save_partition_path: "./data/partitions/emnist_byclass_clients150.pkl"

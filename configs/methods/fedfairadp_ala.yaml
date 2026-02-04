@@ -1,0 +1,56 @@
+# Method: FedFairADP-ALA (Fair, Adaptive DP, ALA, Pseudo-label, Shapley Aggregation)
+method_name: fedfairadp_ala
+
+# ===== 全局训练基础参数（与统一配置一致）=====
+global_rounds: 200
+local_epochs: 5
+batch_size: 32
+learning_rate: 0.01
+optimizer:
+  name: SGD
+  momentum: 0.9
+  weight_decay: 1e-4
+lr_scheduler:
+  name: StepLR
+  step_size: 50
+  gamma: 0.9
+
+# ===== 自适应裁剪差分隐私（Adaptive Clipping DP）=====
+dp:
+  enabled: true
+  epsilon: 10.0          # 隐私预算（实验时通过命令行覆盖）
+  delta: 1e-5            # 固定
+  initial_clip_threshold: 1.0   # T0，初始裁剪阈值
+  shapley_weight: 0.8    # f in formula
+  grad_trend_weight: 0.5 # u in formula
+  noise_multiplier: null # auto-computed from epsilon, delta, clip
+
+# ===== 自适应局部更新（ALA）=====
+ala:
+  enabled: true
+  beta: 0.1              # 自适应局部更新系数（偏差越大，β越小 → 更新越保守）
+
+# ===== 伪标签训练（High-Confidence Pseudo Labeling）=====
+pseudo_labeling:
+  enabled: true
+  confidence_threshold: 0.9   # τ，仅保留置信度 > 0.9 的伪标签
+  loss_weight: 0.5           # 伪标签损失在总损失中的权重
+
+# ===== 公平客户端选择（Fair Client Selection）=====
+fair_selection:
+  enabled: true
+  diversity_weight: 0.6      # 数据多样性权重
+  participation_weight: 0.4  # 参与频率权重
+  selection_ratio: 0.5       # 每轮选择 top 50% 公平分数的客户端
+
+# ===== Shapley 值聚合 =====
+shapley:
+  enabled: true
+  mc_samples: 100            # 蒙特卡洛采样组数 M
+  contribution_threshold: 0.01  # 边际贡献低于此值的客户端可跳过
+  aggregation: "weighted_by_shapley"  # 聚合方式
+
+# ===== 效率与鲁棒性 =====
+efficiency:
+  shapley_parallel: true     # 是否并行计算 Shapley
+  client_dropout_rate: 0.0   # 默认无退出（鲁棒性实验时设为 0.2）

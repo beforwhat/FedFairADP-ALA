@@ -1,0 +1,19 @@
+# Core
+torch==2.1.0
+torchvision==0.16.0
+opacus>=1.5.0,<2.0.0
+numpy==1.24.3
+scikit-learn==1.2.2
+
+# Federated Learning Helpers (optional but recommended)
+fedml==0.8.9  # for communication scaffolding, can be replaced with custom impl
+
+# Utilities
+matplotlib==3.7.1
+seaborn==0.12.2
+tqdm==4.65.0
+PyYAML==6.0
+tensorboard==2.13.0
+
+# For FEMNIST/LEAF (if using original LEAF preprocessing)
+# Note: We assume data is pre-downloaded and split; no heavy deps in main reqs

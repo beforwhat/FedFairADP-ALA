@@ -1,0 +1,31 @@
+# q-Fair Federated Learning (q-FFL)
+method_name: qffl
+
+# ===== 全局训练参数（与统一实验设置一致）=====
+global_rounds: 200
+local_epochs: 5
+batch_size: 32
+learning_rate: 0.01
+optimizer:
+  name: SGD
+  momentum: 0.9
+  weight_decay: 1e-4
+lr_scheduler:
+  name: StepLR
+  step_size: 50
+  gamma: 0.9
+
+# ===== q-FFL 核心参数 =====
+qffl:
+  enabled: true
+  q: 0.1                  # 公平强度超参数（原文 Table 2: q=0.1 for CIFAR-10）
+  # 聚合权重计算: weight_i ∝ (loss_i)^q
+  # q > 0 → 更关注高损失（低性能）客户端
+  aggregation: "weighted_by_loss_power"
+
+# ===== 其他模块（全部关闭）=====
+dp: {enabled: false}
+ala: {enabled: false}
+pseudo_labeling: {enabled: false}
+fair_selection: {enabled: false}
+shapley: {enabled: false}

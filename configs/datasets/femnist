@@ -1,0 +1,32 @@
+# FEMNIST (LEAF Benchmark) Dataset Configuration
+dataset_name: femnist
+task: image_classification
+num_classes: 62                 # 0-9, A-Z, a-z
+input_shape: [1, 28, 28]        # Grayscale, 28x28
+
+# Data source (assumes preprocessed LEAF FEMNIST in standard format)
+data_root: "./data/raw/femnist"  # Should contain 'all_data/', or pre-split .pkl/.h5
+
+# Federated setup
+num_clients: 350                # As per your design
+train_ratio: 1.0                # LEAF already provides per-client train/test split
+
+# Non-IID configuration (natural partitioning by writer)
+non_iid:
+  strategy: "natural_by_writer"   # Each writer is one client — no artificial splitting
+  min_samples_per_client: 50      # Filter out extremely small writers (optional)
+  max_samples_per_client: 5000    # Cap for memory stability (rarely needed)
+  random_sample_sizes: false      # Use natural distribution
+
+# Preprocessing (grayscale, no rotation needed for FEMNIST vs EMNIST)
+transform:
+  train:
+    - ToTensor: {}
+    - Normalize: {mean: [0.175], std: [0.334]}   # Approximate global stats
+  test:
+    - ToTensor: {}
+    - Normalize: {mean: [0.175], std: [0.334]}
+
+# Reproducibility & caching
+random_seed_for_split: 42
+save_partition_path: "./data/partitions/femnist_leaf_clients350.pkl"

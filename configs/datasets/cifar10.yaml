@@ -1,0 +1,34 @@
+# CIFAR-10 Dataset Configuration for FedFairADP-ALA Experiments
+dataset_name: cifar10
+task: image_classification
+num_classes: 10
+input_shape: [3, 32, 32]          # CHW format for PyTorch
+
+# Data source (user should download CIFAR-10 to this directory)
+data_root: "./data/raw"           # Will be used by torchvision.datasets.CIFAR10
+
+# Federated setup
+num_clients: 100
+train_ratio: 0.8                  # Split train/val if needed; test set is fixed
+
+# Non-IID configuration (as per your design)
+non_iid:
+  strategy: "dirichlet_label_skew"
+  dirichlet_alpha: 0.1            # Use 0.01 / 0.1 / 0.3 in different experiments
+  min_samples_per_client: 500
+  max_samples_per_client: 2000    # Simulates device data volume heterogeneity
+  random_sample_sizes: true       # Enable client-wise sample count variation
+
+# Optional: Preprocessing
+transform:
+  train:
+    - RandomHorizontalFlip: {p: 0.5}
+    - ToTensor: {}
+    - Normalize: {mean: [0.4914, 0.4822, 0.4465], std: [0.2470, 0.2435, 0.2616]}
+  test:
+    - ToTensor: {}
+    - Normalize: {mean: [0.4914, 0.4822, 0.4465], std: [0.2470, 0.2435, 0.2616]}
+
+# Metadata for reproducibility
+random_seed_for_split: 42         # Fixed seed for consistent client partitioning
+save_partition_path: "./data/partitions/cifar10_alpha{dirichlet_alpha}_clients100.pkl"

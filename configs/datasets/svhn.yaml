@@ -1,0 +1,35 @@
+# SVHN (Street View House Numbers) Dataset Configuration
+dataset_name: svhn
+task: image_classification
+num_classes: 10                 # Digits 0-9 (note: SVHN uses '10' for digit '0')
+input_shape: [3, 32, 32]        # RGB, 32x32
+
+# Data source
+data_root: "./data/raw"
+
+# Federated setup
+num_clients: 200
+train_ratio: 1.0                # SVHN has separate train/extra/test; we use train+extra as training
+
+# Non-IID configuration (as per your design)
+non_iid:
+  strategy: "region_based_sparse_labels"
+  num_regions: 50               # Simulate 50 geographic regions
+  clients_per_region: 4         # 50 regions × 4 clients = 200 clients
+  sparse_label_ratio: 0.4       # 40% of clients get only 3 random classes
+  full_label_ratio: 0.6         # 60% of clients get all 10 classes
+  min_samples_per_client: 800
+  max_samples_per_client: 3000
+
+# Preprocessing
+transform:
+  train:
+    - ToTensor: {}
+    - Normalize: {mean: [0.4377, 0.4438, 0.4728], std: [0.1980, 0.2010, 0.1970]}  # SVHN stats
+  test:
+    - ToTensor: {}
+    - Normalize: {mean: [0.4377, 0.4438, 0.4728], std: [0.1980, 0.2010, 0.1970]}
+
+# Reproducibility
+random_seed_for_split: 42
+save_partition_path: "./data/partitions/svhn_region_sparse_clients200.pkl"

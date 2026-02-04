@@ -1,0 +1,45 @@
+# DP-FedAvg: FedAvg + Fixed Clipping + Gaussian Noise (Baseline for Privacy)
+method_name: dp_fedavg
+
+# ===== 全局训练参数（与统一配置完全一致）=====
+global_rounds: 200
+local_epochs: 5
+batch_size: 32
+learning_rate: 0.01
+optimizer:
+  name: SGD
+  momentum: 0.9
+  weight_decay: 1e-4
+lr_scheduler:
+  name: StepLR
+  step_size: 50
+  gamma: 0.9
+
+# ===== 差分隐私（DP）=====
+dp:
+  enabled: true
+  epsilon: 10.0           # 实验时通过命令行覆盖（如 --override dp.epsilon=0.1）
+  delta: 1e-5             # 固定，与 FedFairADP-ALA 一致
+  clip_threshold: 1.0     # 🔑 固定裁剪阈值（关键！与自适应 DP 对比）
+  noise_multiplier: null  # 自动由 Opacus 根据 ε, δ, clip 计算
+
+# ===== 本地更新机制 =====
+ala:
+  enabled: false          # 普通 SGD
+
+# ===== 伪标签 =====
+pseudo_labeling:
+  enabled: false
+
+# ===== 客户端选择 =====
+fair_selection:
+  enabled: false
+  client_fraction: 1.0
+
+# ===== 聚合方式 =====
+aggregation:
+  type: fedavg
+
+# ===== Shapley 值 =====
+shapley:
+  enabled: false

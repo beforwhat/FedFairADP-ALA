@@ -1,0 +1,32 @@
+# FedProx: Federated Learning with Proximal Regularization
+method_name: fedprox
+
+# ===== 全局训练参数（与统一配置一致）=====
+global_rounds: 200
+local_epochs: 5
+batch_size: 32
+learning_rate: 0.01
+optimizer:
+  name: SGD
+  momentum: 0.9
+  weight_decay: 1e-4
+lr_scheduler:
+  name: StepLR
+  step_size: 50
+  gamma: 0.9
+
+# ===== 差分隐私（DP）=====
+dp:
+  enabled: false          # 原版无 DP
+
+# ===== FedProx 核心参数 =====
+fedprox:
+  enabled: true
+  mu: 0.1                 # 正则系数 μ（原文 Appendix C 推荐值 for CIFAR-10/EMNIST）
+
+# ===== 其他模块 =====
+ala: {enabled: false}
+pseudo_labeling: {enabled: false}
+fair_selection: {enabled: false, client_fraction: 1.0}
+shapley: {enabled: false}
+aggregation: {type: fedavg}

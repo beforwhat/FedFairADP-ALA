@@ -1,0 +1,34 @@
+# DP-FedAvg with Adaptive Clipping (Opacus Built-in)
+method_name: adaptive_clipping
+
+# ===== 全局训练参数（与统一实验设置一致）=====
+global_rounds: 200
+local_epochs: 5
+batch_size: 32
+learning_rate: 0.01
+optimizer:
+  name: SGD
+  momentum: 0.9
+  weight_decay: 1e-4
+lr_scheduler:
+  name: StepLR
+  step_size: 50
+  gamma: 0.9
+
+# ===== 差分隐私（DP）核心配置 =====
+dp:
+  enabled: true
+  epsilon: 10.0           # 实验时通过命令行覆盖（如 --override dp.epsilon=0.1）
+  delta: 1e-5             # 固定，与 FedFairADP-ALA 一致
+  # Adaptive clipping via gradient norm quantile (Opacus native)
+  clip_mode: "adaptive"   # 必须设为 "adaptive"
+  clip_quantile: 0.5      # 使用梯度范数的中位数（50% 分位数）更新阈值
+  clip_threshold_init: 1.0  # 初始裁剪阈值 T0 = 1.0（与你方法一致）
+  noise_multiplier: null  # 由 Opacus 根据 ε, δ, batch_size 自动计算
+
+# ===== 其他模块（全部关闭，保持纯净）=====
+ala: {enabled: false}
+pseudo_labeling: {enabled: false}
+fair_selection: {enabled: false}
+shapley: {enabled: false}
+aggregation: {type: fedavg}
