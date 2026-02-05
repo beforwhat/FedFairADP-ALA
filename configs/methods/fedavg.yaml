@@ -30,7 +30,7 @@ pseudo_labeling:
 # ===== 客户端选择 =====
 fair_selection:
   enabled: false          # 随机均匀选择客户端
-  client_fraction: 1.0    # 默认每轮选全部客户端（或按实验需求设为 0.1/0.5）
+  client_fraction: 0.1    # 默认每轮选全部客户端（或按实验需求设为 0.1/0.5）
 
 # ===== 聚合方式 =====
 aggregation:

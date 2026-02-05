@@ -14,6 +14,9 @@ lr_scheduler:
   name: StepLR
   step_size: 50
   gamma: 0.9
+fair_selection:
+  enabled: false          # 随机均匀选择客户端
+  client_fraction: 0.1
 
 # ===== 差分隐私（DP）核心配置 =====
 dp:

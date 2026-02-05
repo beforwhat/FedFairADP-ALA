@@ -1,7 +1,4 @@
-# core/fairness_selector.py
-
 import random
-import numpy as np
 from typing import List, Dict
 
 
@@ -65,10 +62,15 @@ def select_clients_fairly(
 
 
 def _weighted_sample(population, weights, k):
-    """Weighted random sample without replacement."""
+    """选择权重最大的 k 个元素（非随机，确定性选择）"""
     if k >= len(population):
         return population[:]
-    indices = np.random.choice(
-        len(population), size=k, replace=False, p=np.array(weights) / np.sum(weights)
-    )
-    return [population[i] for i in indices]
+    
+    # 将 population 和 weights 配对，按权重降序排序
+    paired = list(zip(population, weights))
+    # 按权重从高到低排序
+    paired_sorted = sorted(paired, key=lambda x: x[1], reverse=True)
+    # 取前 k 个的 population 元素
+    selected = [item[0] for item in paired_sorted[:k]]
+    
+    return selected
